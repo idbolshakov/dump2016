@@ -27,7 +27,7 @@ var view = (function() {
   var throwErrorIfStateObjectNotSend = function(stateObject) {
   
     if (typeof stateObject !== 'object') {
-	  throw new Error('State Ojbect not send');
+	  throw new Error('State Object not send');
 	};
   };
   
