@@ -7,10 +7,10 @@
 var model = require('./model');
 var view  = require('./view');
 
-function beep(stateObj) {
-	
-	console.log( view.getScreen(stateObj) );
+function printLayout(stateObject) {
+
+  console.log( view.getScreen(stateObject) );
 };
 
 model.init('h c d c h d');
-model.run(beep);
+model.run(printLayout);

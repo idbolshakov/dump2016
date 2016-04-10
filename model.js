@@ -153,7 +153,6 @@ var model = (function() {
   
   /**
    * Генерирует state-объекты для экранов игры на основе cardsPosition
-   * и передает его в callback
    * 
    * Не покрыт юнит-тестами
    * 
@@ -162,193 +161,60 @@ var model = (function() {
    */
   var run = function(callback) {  
     
-    callback(getStartScreenStateObject());
-    
-    getScreenStateObject(callback);    
+    var screensTree = [];
+    generateScreensTree(function(screenId) {
+		
+	  screensTree.push(screenId);}
+	);
+	
+	for (var i=0; i<screensTree.length; i++) {
+	  
+	  var stateObject = {
+	    
+	    screenId: screensTree[i],
+	    cardsCount: cardsCount,
+	    className: [],
+	    links: []
+	  };
+	  
+	  callback(stateObject);
+	};
   };
   
   /**
    * @private
    */
-  var getStartScreenStateObject = function() {
-	
-	return {
-	  cardsCount: cardsCount,
-	  screenId: 0,
-	  className: getClassNamesArray(),
-	  links: getLinksArray()
-	};
-  };  
-  
-  /**
-   * @private
-   */
-  var getScreenStateObject = function(callback, position) {   
+  var generateScreensTree = function(callback, screenId) {
     
-	position = position || '';
+	screenId = screenId || '';
 	
-	// не выбрано первой карты из неизвестной пары
-	if ( position.length === 0 || position.length%2 === 1 ) { 
+	if ( screenId.length === 0 || screenId.length%2 === 1 ) { // не выбрано первой карты из неизвестной пары
 		
 		for (var i=1; i<=cardsPosition.length; i++) {
 			
-			if (!~position.indexOf(i)) {
-				callback({
-				  cardsCount: cardsCount,
-				  screenId: position + String(i),
-				  className: getClassNamesArray(position + String(i)),
-				  links: getLinksArray(position + String(i))
-				});
-
-				getScreenStateObject(callback, position + String(i));
+			if (!~screenId.indexOf(i)) {
+				callback(screenId + String(i));
+			
+				generateScreensTree(callback, screenId + String(i));
 			};
 		};
 		
 	} else { // выбрана первая карта из неизвестной пары
 
-		var firstSelectedCard  = position[(position.length-2)];
-		var secondSelectedCard = position[(position.length-1)];
+		var firstSelectedCard  = screenId[(screenId.length-2)];
+		var secondSelectedCard = screenId[(screenId.length-1)];
 
-		if (cardsPosition[firstSelectedCard-1] === cardsPosition[secondSelectedCard-1] 
-		  && position.length <cardsPosition.length) {
+		if (cardsPosition[firstSelectedCard-1] === cardsPosition[secondSelectedCard-1] && screenId.length <cardsPosition.length) {
 		  for (var i=1; i<=cardsPosition.length; i++) {
-			if (!~position.indexOf(i)) {			
-				getScreenStateObject(callback, position + String(i));
+			if (!~screenId.indexOf(i)) {			
+				generateScreensTree(callback, screenId + String(i));
 			};
 		  } 
 		};
 	};    
-  };
-  
-  /**
-   * @private
-   */
-  var getClassNamesArray = function(screenPosition) {  
-	  
-    var className = [];
-    
-    for (var i=0; i<cardsCount; i++) {
-	  
-	  className[i]  = getCardSuit(cardsPosition[i]); 
-	  
-	  className[i] += fadeIfStartScreen(screenPosition);
-	  
-	  className[i] += hideIfUnselect(screenPosition, i+1);
-	};
-	
-	return className;	 
-  };
-  
-  /**
-   * @private
-   */
-  var getCardSuit = function(char) {
-    
-    switch (char) {
-	  
-	  case 'h': 
-	    return 'heart ';
-	    break;
-	      
-	  case 'd': 
-	    return 'diamond ';
-        break;
-	      
-	  case 'c': 
-	    return 'club ';
-	    break;
-	      
-	  case 's': 
-	    return 'spade ';
-	    break;	      	      
-	};    
-  };
-    
-  /**
-   * @private
-   */
-  var getLinksArray = function(screenPosition) {  
-    
-    if ( (screenPosition % 2 === 1) 
-      || (typeof screenPosition == 'undefined') ) {
-	  
-	  return linksArrayFromFirstCardSelectedScreen(screenPosition);
-	} else {
-	  
-	  return linksArrayFromSecondCardSelectedScreen(screenPosition);
-	};	 
   };  
   
-  /**
-   * @private
-   */
-  var linksArrayFromFirstCardSelectedScreen = function(screenPosition) {  
-    
-    var links = [];
-    
-    for (var j=0; j<cardsCount; j++) {
-	  
-	  if (!~screenPosition.indexOf(j+1)) { 
-		  
-	    links[j] = screenPosition + String(j+1);
-	  } else {
-	    
-	    links[j] = screenPosition;
-	  };
-	};
-	
-	return links;	 
-  }; 
   
-  /**
-   * @private
-   */
-  var linksArrayFromSecondCardSelectedScreen = 
-    function(screenPosition) {  
-   
-    var links = [];
-    
-    var firstSelectedCard  = screenPosition[(screenPosition.length-2)];
-	var secondSelectedCard = screenPosition[(screenPosition.length-1)];
-   
-    if (cardsPosition[firstSelectedCard] 
-      === cardsPosition[firstSelectedCard]) {
-	  
-	  return linksArrayFromFirstCardSelectedScreen(ScreenPosition);	  
-	};
-  };
-  
-  /**
-   * @private
-   */
-  var fadeIfStartScreen = function(screenPosition) {
-    
-    if (typeof screenPosition === 'undefined') {
-		
-	  return 'hide ';
-	} else {
-		
-	  return '';
-	};
-  }; 
-  
-  /**
-   * @private
-   */
-  var hideIfUnselect = function(screenPosition, currentCard) {
-    
-    if (typeof screenPosition === 'string' && 
-      !~screenPosition.indexOf(currentCard)) {
-		
-	  return 'hidden ';
-	} else {
-		
-	  return '';
-	};
-  };        
-
-  
-    
   /**
    * Возвращает поле cardsPosition в котором хранится шаблон 
    * расположения карт
