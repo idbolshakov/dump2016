@@ -54,10 +54,10 @@ html, body {
 
 
 
-.heart   {background: #ff5555;}
-.diamond {background: #5555ff;}
-.club    {background: #55ff55;}
-.spade   {background: #ffff55;}
+.heart   {background: url('images/heart.svg') no-repeat center center;}
+.diamond {background: url('images/diamond.svg') no-repeat  center center;}
+.club    {background: url('images/club.svg') no-repeat  center center;}
+.spade   {background: url('images/spade.svg') no-repeat  center center;}
 
 .hidden  {background: #fff;}
 
