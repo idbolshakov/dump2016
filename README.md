@@ -48,7 +48,7 @@
 * h - heart ♥︎ 
 * d - diamond ♦︎ 
 * c - club ♣
-* s - sparks ♠ 
+* s - spade ♠ 
 
 Другие символы будут удалены из шаблоны.
 
