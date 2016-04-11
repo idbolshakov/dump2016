@@ -7,7 +7,7 @@
 var model = require('./model');
 var view  = require('./view');
 
-model.init('hssh');
+model.init('hcd chd');
 
 console.log( view.getStyles(model.getCardsPosition()) );
 
