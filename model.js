@@ -1,7 +1,9 @@
 var EventEmitter = require('events').EventEmitter;
 
 var model = (function() {
-	
+  
+  /** @private */ var MAX_LENGTH = 8; 	
+  
   /** @private */ var cardsPosition;  
   /** @private */ var cardsCount;
   
@@ -60,6 +62,8 @@ var model = (function() {
     throwErrorIfLengthIsNil(inputCardsPosition);
     
     throwErrorIfCardsNotDividenInPairs(inputCardsPosition);
+    
+    throwErrorIfLengthTooLarge(inputCardsPosition);
 
   }; 
   
@@ -95,6 +99,17 @@ var model = (function() {
 	    Error('Cards should be divided in pairs');
 	}; 
   }; 
+  
+  /**
+   * @private
+   */
+  var throwErrorIfLengthTooLarge = function(inputString) { 
+    
+    if (inputString > MAX_LENGTH) {
+	  throw new 
+	    Error('Cards position too large');
+	}; 
+  };   
   
   /**
    * @private

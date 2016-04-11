@@ -130,11 +130,27 @@ var view = (function() {
   };  
   
   
+  
+  /**
+   * @public
+   */
+  var getStyles = function(cardsPosition) {
+ 
+    return String()
+      +'<style>\n'
+        +'.cardsContainer {\n'
+          +'width: ' + 100*cardsPosition.length + 'px;\n'
+          +'height: 380px;\n'
+        +'}\n'
+      +'</style>\n'      
+  };  
+  
   /**
    * @return
    */  
   return {
-    getScreen: getScreen};
+    getScreen: getScreen,
+    getStyles: getStyles};
 })();	
 
 module.exports = view;
