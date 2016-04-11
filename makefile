@@ -9,6 +9,6 @@ all:
 	@cp static/suits/club.svg    build/images/club.svg
 	@cp static/suits/diamond.svg build/images/diamond.svg
 	@cp static/suits/heart.svg   build/images/heart.svg
-	@cp static/suits/spark.svg   build/images/spark.svg
+	@cp static/suits/spade.svg   build/images/spade.svg
 	
 	@echo "**** build complete"
