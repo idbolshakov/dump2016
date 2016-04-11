@@ -161,6 +161,9 @@ var model = (function() {
    */
   var run = function(callback) {  
     
+    callback(getStartScreenStateObject());
+    
+    
     var screensTree = [];
     generateScreensTree(function(screenId) {
 		
@@ -168,18 +171,197 @@ var model = (function() {
 	);
 	
 	for (var i=0; i<screensTree.length; i++) {
-	  
-	  var stateObject = {
-	    
-	    screenId: screensTree[i],
-	    cardsCount: cardsCount,
-	    className: [],
-	    links: []
-	  };
-	  
-	  callback(stateObject);
+  
+	  callback( getScreenStateObject(screensTree, screensTree[i]) );
 	};
   };
+  
+  /**
+   * @private
+   */
+  var getStartScreenStateObject = function() {
+	
+	var startsLinks = function() {
+	  var links = [];
+	  for (var i=0; i<cardsCount; i++) {
+	    links[i] = i+1;
+	  };
+		
+	  return links;
+	};
+	
+	return {
+	  cardsCount: cardsCount,
+	  screenId: 0,
+	  hideRules: false,
+	  className: getClassNamesArray(),
+	  links: startsLinks()
+	};
+  };   
+  
+  /**
+   * @private
+   */
+  var getClassNamesArray = function(screenPosition) {  
+	  
+    var className = [];
+    
+    for (var i=0; i<cardsCount; i++) {
+	  
+	  className[i]  = getCardSuit(cardsPosition[i]); 
+	  
+	  className[i] += fadeIfStartScreen(screenPosition);
+	  
+	  className[i] += hideIfUnselect(screenPosition, i+1);
+	  
+	  className[i] += unfixIfNeed(screenPosition, i+1);
+	};
+	
+	return className;	 
+  };
+  
+  /**
+   * @private
+   */
+  var getCardSuit = function(char) {
+    
+    switch (char) {
+	  
+	  case 'h': 
+	    return 'heart ';
+	    break;
+	      
+	  case 'd': 
+	    return 'diamond ';
+        break;
+	      
+	  case 'c': 
+	    return 'club ';
+	    break;
+	      
+	  case 's': 
+	    return 'spade ';
+	    break;	      	      
+	};    
+  };
+  
+ /**
+   * @private
+   */
+  var fadeIfStartScreen = function(screenPosition) {
+    
+    if (typeof screenPosition === 'undefined') {
+		
+	  return 'hide ';
+	} else {
+		
+	  return '';
+	};
+  }; 
+  
+  /**
+   * @private
+   */
+  var hideIfUnselect = function(screenPosition, currentCard) {
+    
+    if (typeof screenPosition === 'string' 
+      &&  !~screenPosition.indexOf(currentCard)) {
+		
+	  return 'hidden ';
+	} else {
+		
+	  return '';
+	};
+  }; 
+  
+  /**
+   * @private
+   */
+  var unfixIfNeed = function(screenPosition, cardNumber) {
+	
+	if (typeof screenPosition === 'string' 
+	  && screenPosition.length > 2
+	  && screenPosition.length % 2 === 0) {
+	    
+	    var a  = screenPosition[(screenPosition.length-2)];
+	    var b  = screenPosition[(screenPosition.length-1)];
+	      
+	    if (cardsPosition[a-1] === cardsPosition[b-1]
+	      || screenPosition
+	        .substring(0, screenPosition.length-2)
+	        .indexOf(cardNumber) !== -1) {
+		  return 'fixed ';
+		};	  
+	};
+	
+	if (typeof screenPosition === 'string' 
+	  && screenPosition.length > 2
+	  && screenPosition.length % 2 !== 0) {
+	    
+	  if (screenPosition
+	    .substring(0, screenPosition.length-1)
+	    .indexOf(cardNumber) !== -1 
+	    || screenPosition[screenPosition.length-1] == cardNumber) {
+	  
+	    return 'fixed ';
+	  }
+	};	
+	
+	return 'notFixed ';	
+	
+  };  
+  
+  /**
+   * @private
+   */
+  var getLinks = function(screensTree, screenId) {
+    
+    var linksArray = [];
+    for (var i=0; i<cardsCount; i++) {
+	  
+      if (screenId.length == 0 || screenId.length % 2 === 0) { // четный экран
+	    
+	    if (screensTree.indexOf(screenId + String(i+1)) !== -1) {  // если есть такой экран в дереве
+		  
+		  linksArray[i] = screenId + String(i+1);
+		  
+		} else {
+			
+		  var a  = screenId[(screenId.length-2)];
+	      var b  = screenId[(screenId.length-1)];
+	      
+	      if (cardsPosition[a-1] === cardsPosition[b-1]) {
+		    linksArray[i] = screenId;
+		  } else {
+		    if (screenId.substring(0, screenId.length-2)
+		      .indexOf(i+1) === -1) {
+				  
+			  linksArray[i] = screenId.substring(0, screenId.length-2) 
+			    + String(i+1);	
+			} else {
+			  
+			  linksArray[i] = screenId;
+			};
+		    
+		  };		  
+		  
+		 };
+	    
+	  } else { // нечетный экран
+		  
+	    if (screensTree.indexOf(screenId + String(i+1)) !== -1) {  // если есть такой экран в дереве
+		  
+		  linksArray[i] = screenId + String(i+1);
+		  
+		} else {
+			
+		  linksArray[i] = screenId;
+		};        
+	  };
+	};
+	
+	return linksArray;
+  };             
   
   /**
    * @private
@@ -207,12 +389,52 @@ var model = (function() {
 		if (cardsPosition[firstSelectedCard-1] === cardsPosition[secondSelectedCard-1] && screenId.length <cardsPosition.length) {
 		  for (var i=1; i<=cardsPosition.length; i++) {
 			if (!~screenId.indexOf(i)) {			
+				callback(screenId + String(i));
 				generateScreensTree(callback, screenId + String(i));
 			};
 		  } 
 		};
 	};    
-  };  
+  };
+  
+  /**
+   * @private
+   */
+  var getScreenStateObject = function(screensTree, screenId) {
+	
+	return {
+	  cardsCount: cardsCount,
+	  screenId: screenId,
+	  hideRules: checkHideRules(screenId),
+	  className: getClassNamesArray(screenId),
+	  links: getLinks(screensTree, screenId)
+	};
+  };   
+  
+  /**
+   * @private
+   */
+  var checkHideRules = function(screenId) {
+    
+    var hideRules = false;
+    
+    if (screenId.length > 1) {
+	
+      var firstSelectedCard  = screenId[(screenId.length-2)];
+	  var secondSelectedCard = screenId[(screenId.length-1)];
+
+      if ( cardsPosition[firstSelectedCard-1] 
+        === cardsPosition[secondSelectedCard-1] ) {
+		  	  
+        hideRules = false;
+	  } else {
+		  
+	    hideRules = true;
+	  };	
+	};    	
+	
+	return hideRules;
+  };   
   
   
   /**
