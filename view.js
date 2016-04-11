@@ -73,6 +73,21 @@ var view = (function() {
             +'-moz-animation-delay: 0.25s;\n'
             +'-moz-animation-duration: 0.25s;\n'
             +'-moz-animation-fill-mode: forwards;\n'
+            
+            +'-webkit-animation-name: hide;\n'
+            +'-webkit-animation-delay: 0.25s;\n'
+            +'-webkit-animation-duration: 0.25s;\n'
+            +'-webkit-animation-fill-mode: forwards;\n'
+            
+            +'-o-animation-name: hide;\n'
+            +'-o-animation-delay: 0.25s;\n'
+            +'-o-animation-duration: 0.25s;\n'
+            +'-o-animation-fill-mode: forwards;\n'       
+            
+            +'-animation-name: hide;\n'
+            +'-animation-delay: 0.25s;\n'
+            +'-animation-duration: 0.25s;\n'
+            +'-animation-fill-mode: forwards;\n'                             
           +'}'
         +'</style>\n'	
 	}

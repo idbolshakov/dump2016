@@ -67,6 +67,21 @@ html, body {
  -moz-animation-delay: 0.5s;
  -moz-animation-duration: 0.5s;
  -moz-animation-fill-mode: forwards;
+ 
+ -webkit-animation-name: hide;
+ -webkit-animation-delay: 0.5s;
+ -webkit-animation-duration: 0.5s;
+ -webkit-animation-fill-mode: forwards;
+ 
+ -o-animation-name: hide;
+ -o-animation-delay: 0.5s;
+ -o-animation-duration: 0.5s;
+ -o-animation-fill-mode: forwards;  
+ 
+ animation-name: hide;
+ animation-delay: 0.5s;
+ animation-duration: 0.5s;
+ animation-fill-mode: forwards;  
 }
 
 
